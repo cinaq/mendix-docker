@@ -46,17 +46,38 @@ COPY ./releases/TestApp080500.mda /srv/mendix/data/model-upload/
 RUN mendix-build
 ```
 
-Build the image:
+Also create a `docker-compose.yml`:
+
 ```
-docker build -t mendix-app:latest .
+version: '3.3'
+
+services:
+   db:
+     image: postgres:12
+     restart: always
+     environment:
+       POSTGRES_USER: mendix
+       POSTGRES_PASSWORD: mendix
+       POSTGRES_DB: mendix
+
+   app:
+     restart: always
+     depends_on:
+       - db
+     build: .
+     image: app
+     ports:
+       - "8000:8000"
 ```
 
-After that you can run any number of instances
+Build and run the stack:
 ```
-docker run mendix-app
+docker-compose build
+docker-compose up -d
+docker-compose logs -f
+
 ```
 
-visit the App
-```
-curl localhost:$(docker inspect -f '{{(index (index .NetworkSettings.Ports "8000/tcp") 0).HostPort}}' mendix_app)
-```
+Your app should be running at http://localhost:8000
+
+
