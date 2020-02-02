@@ -2,24 +2,25 @@
 #
 # VERSION               0.4
 
-FROM debian:jessie-backports
-MAINTAINER Pim van den Berg <pim.van.den.berg@mendix.com>
+FROM debian:stretch-backports
+MAINTAINER Xiwen Cheng <x@cinaq.com>
 
-RUN apt-key adv --fetch-keys http://packages.mendix.com/mendix-debian-archive-key.asc
-RUN echo "deb http://packages.mendix.com/platform/debian/ jessie main" > /etc/apt/sources.list.d/mendix.list
+RUN apt update && apt install -y gnupg ca-certificates-java openjdk-11-jre postgresql-client procps curl
+# Need help from Mendix
+#RUN apt-key adv --fetch-keys https://packages.mendix.com/mendix-debian-archive-key.asc
+RUN echo "deb http://packages.mendix.com/platform/debian/ stretch main" > /etc/apt/sources.list.d/mendix.list
 
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates-java=20161107~bpo8+1 m2ee-tools openjdk-8-jre-headless postgresql-client procps vim-nox curl && apt-get clean
+RUN apt-get update && apt-get install -y --no-install-recommends --allow-unauthenticated m2ee-tools && apt-get clean
 
-RUN useradd -m mendix -b /srv && cd /srv/mendix && mkdir .m2ee data model runtimes web
+RUN useradd -m mendix -b /srv && cd /srv/mendix && mkdir -p .m2ee data/database data/files data/model-upload data/log data/tmp  model runtimes web
 ADD m2ee.yaml /srv/mendix/.m2ee/m2ee.yaml
+
 RUN chown -R mendix:mendix /srv/mendix
 
-ENV MXDATA /srv/mendix/data
-VOLUME /srv/mendix/data
+VOLUME /srv/mendix/data/files
 
-COPY entrypoint /
+COPY ./bin/* /usr/local/bin/
 
-ENTRYPOINT ["/entrypoint"]
+ENTRYPOINT ["/usr/local/bin/mendix-run"]
 
 EXPOSE 8000
-CMD ["setup"]

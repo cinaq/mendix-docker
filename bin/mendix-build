@@ -1,0 +1,8 @@
+#!/bin/bash
+
+export HOME=/srv/mendix
+cd "$HOME"
+
+mda_path="$(find /srv/mendix/data/model-upload -type f -name \*.mda | tail -n1)"
+m2ee -c .m2ee/m2ee.yaml --yolo unpack "$mda_path"
+m2ee -c .m2ee/m2ee.yaml download_runtime
