@@ -36,8 +36,13 @@ Create a Dockerfile with the following contents:
 ```
 FROM cinaq/mendix-docker:latest
 
+# Download needed runtime before MDA for caching
+RUN mendix-download-runtime 8.5.0.64176
+
 # MDA
 COPY ./releases/TestApp080500.mda /srv/mendix/data/model-upload/
+
+# pull in more dependencies if needed
 RUN mendix-build
 ```
 
