@@ -12,7 +12,7 @@ RUN echo "deb http://packages.mendix.com/platform/debian/ stretch main" > /etc/a
 
 RUN apt-get update && apt-get install -y --no-install-recommends --allow-unauthenticated m2ee-tools && apt-get clean
 
-RUN useradd -m mendix -b /srv && cd /srv/mendix && mkdir -p .m2ee data/database data/files data/model-upload data/log data/tmp  model runtimes web
+RUN useradd -m mendix -b /srv && cd /srv/mendix && mkdir -p .m2ee data/database data/files data/model-upload data/log data/tmp  model runtimes web package
 ADD m2ee.yaml /srv/mendix/.m2ee/m2ee.yaml
 
 RUN chown -R mendix:mendix /srv/mendix

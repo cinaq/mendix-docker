@@ -1,7 +1,0 @@
-#!/bin/bash
-
-VERSION="$1"
-URL="https://cdn.mendix.com/runtime/mendix-${VERSION}.tar.gz"
-
-echo "Downloading runtime from $URL"
-curl -SL "$URL" | tar -zxC /srv/mendix/runtimes

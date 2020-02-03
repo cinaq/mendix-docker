@@ -1,8 +1,37 @@
 #!/bin/bash
 
+set -e
+
 export HOME=/srv/mendix
 cd "$HOME"
 
-mda_path="$(find /srv/mendix/data/model-upload -type f -name \*.mda | tail -n1)"
+# Build from source if needed
+mpr_path="$(find /srv/mendix/package -type f -maxdepth 1 -name \*.mpr | tail -n1)"
+mda_path="/srv/mendix/data/model-upload/app.mda"
+mxbuild_exe="/srv/mendix/build/modeler/mxbuild.exe"
+if [ -n "$mpr_path" ]; then
+    # Confirm mxbuild is present if not pull it in
+    if [ ! -f "$mxbuild_exe" ]; then
+        echo "Please review the README for an efficient example usage of mxbuild"
+        echo "MxBuild not found, trying to pull it..."
+        mendix-download "$MENDIX_VERSION" with-mxbuild
+    fi
+    JAVA="$(find /usr/lib/jvm -type f -name java | head -n1)"
+    JAVA_HOME="$(dirname $(dirname $JAVA))"
+    echo "Building the MDA from source"
+    mono "$mxbuild_exe" --target=package --java-home="$JAVA_HOME" --java-exe-path="$JAVA" --output="$mda_path" $mpr_path
+else
+    mda_path_tmp="$(find /srv/mendix/package -maxdepth 1 -type f -name \*.mda | tail -n1)"
+    mv "$mda_path_tmp" "$mda_path"
+fi
+
+echo "Unpacking MDA: $mda_path"
 m2ee -c .m2ee/m2ee.yaml --yolo unpack "$mda_path"
 m2ee -c .m2ee/m2ee.yaml download_runtime
+
+echo "Clean up temporary tools"
+rm -rf /srv/mendix/{package,build} &>/dev/null || true
+apt purge mono-runtime openjdk-11-jdk -y &>/dev/null || true
+apt autoremove -y
+apt clean -y
+

@@ -34,15 +34,22 @@ With own Dockerfile
 
 Create a Dockerfile with the following contents:
 ```
-FROM cinaq/mendix-docker:latest
+FROM cinaq/mendix-docker:v0.2
 
-# Download needed runtime before MDA for caching
-RUN mendix-download-runtime 8.5.0.64176
+ENV MENDIX_VERSION 8.5.0.64176
+# runtime is always needed to run
+RUN mendix-download $MENDIX_VERSION
 
-# MDA
-COPY ./releases/TestApp080500.mda /srv/mendix/data/model-upload/
+# OPTION 1: MDA
+ARG APP_PACKAGE=releases/TestApp080500.mda
 
-# pull in more dependencies if needed
+# OPTION 2: Project source
+#RUN mendix-download $MENDIX_VERSION with-mxbuild
+#ARG APP_PACKAGE=.
+# NOTE: The order of above two lines is important for efficiency!
+
+# DO NOT CHANGE BELOW HERE
+COPY $APP_PACKAGE /srv/mendix/package
 RUN mendix-build
 ```
 
