@@ -2,5 +2,12 @@
 
 m2ee -c /srv/mendix/.m2ee/m2ee.yaml --yolo start
 
+tail -n10000 -F /srv/mendix/data/log/app.log &
+
 # block until java process is gone
-tail -n10000 -F /srv/mendix/data/log/app.log
+until [ -z "$(pidof java)" ]; do
+    sleep 3
+done
+
+echo "Java process is gone, exiting..."
+exit 1
