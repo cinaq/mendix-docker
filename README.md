@@ -51,6 +51,8 @@ ARG APP_PACKAGE=releases/TestApp080500.mda
 # DO NOT CHANGE BELOW HERE
 COPY $APP_PACKAGE /srv/mendix/package
 RUN mendix-build
+
+USER mendix
 ```
 
 Also create a `docker-compose.yml`:
