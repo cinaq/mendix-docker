@@ -34,14 +34,14 @@ With own Dockerfile
 
 Create a Dockerfile with the following contents:
 ```
-FROM cinaq/mxbuild-docker:v0.1 AS builder
+FROM cinaq/mxbuild-docker AS builder
 # OPTION 1: MDA
 #COPY ./releases/TestApp.mda /srv/mendix/package
 # OPTION 2: Project source
 COPY . /srv/mendix/package
 RUN mendix-build
 
-FROM cinaq/mendix-docker:v0.3
+FROM cinaq/mendix-docker
 ENV MENDIX_VERSION 8.5.0.64176
 # runtime is always needed to run
 RUN mendix-download $MENDIX_VERSION
