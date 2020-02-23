@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+export HOME=/srv/mendix
+cd "$HOME"
+
+mda_path="/srv/mendix/data/model-upload/app.mda"
+echo "Unpacking MDA: $mda_path"
+m2ee -c .m2ee/m2ee.yaml --yolo unpack "$mda_path"
+# download runtime if needed
+m2ee -c .m2ee/m2ee.yaml download_runtime
+
+# give read access for non-root
+chmod -R go+rX /srv/mendix

@@ -34,24 +34,19 @@ With own Dockerfile
 
 Create a Dockerfile with the following contents:
 ```
-FROM cinaq/mendix-docker:v0.2
+FROM cinaq/mxbuild-docker:v0.1 AS builder
+# OPTION 1: MDA
+#COPY ./releases/TestApp.mda /srv/mendix/package
+# OPTION 2: Project source
+COPY . /srv/mendix/package
+RUN mendix-build
 
+FROM cinaq/mendix-docker:v0.3
 ENV MENDIX_VERSION 8.5.0.64176
 # runtime is always needed to run
 RUN mendix-download $MENDIX_VERSION
-
-# OPTION 1: MDA
-ARG APP_PACKAGE=releases/TestApp080500.mda
-
-# OPTION 2: Project source
-#RUN mendix-download $MENDIX_VERSION with-mxbuild
-#ARG APP_PACKAGE=.
-# NOTE: The order of above two lines is important for efficiency!
-
-# DO NOT CHANGE BELOW HERE
-COPY $APP_PACKAGE /srv/mendix/package
-RUN mendix-build
-
+COPY --from=builder /srv/mendix/data/model-upload/app.mda /srv/mendix/data/model-upload/app.mda
+RUN mendix-unpack
 USER mendix
 ```
 
