@@ -11,15 +11,13 @@ m2ee:
    "-Dfile.encoding=UTF-8", "-XX:MaxPermSize=128M", "-Xmx512M", "-Xms512M",
    "-Djava.io.tmpdir=/srv/mendix/data/tmp",
  ]
- logfile: /srv/mendix/data/log/m2ee.log
+ logfile: /dev/stderr
+ pidfile: /tmp/m2ee.pid
 logging:
- - # example of file logging by the platform itself
-   name: FileSubscriber
+ - name: FileSubscriber
    type: file
    autosubscribe: INFO
-   filename: /srv/mendix/data/log/app.log
-   max_size: 10485760 # bytes(!!)
-   max_rotation: 7
+   filename: /dev/stdout
 mxruntime:
  DatabaseType: PostgreSQL
  DatabaseHost: "db:5432"
