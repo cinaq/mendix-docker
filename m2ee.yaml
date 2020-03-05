@@ -9,18 +9,22 @@ m2ee:
  runtime_listen_addresses: "*"
  javaopts: [
    "-Dfile.encoding=UTF-8", "-XX:MaxPermSize=128M", "-Xmx512M", "-Xms512M",
-   "-Djava.io.tmpdir=/srv/mendix/data/tmp",
+   "-Djava.io.tmpdir=/tmp",
  ]
- logfile: /dev/stderr
+ logfile: /tmp/m2ee.log
  pidfile: /tmp/m2ee.pid
 logging:
- - name: FileSubscriber
-   type: file
+ - name: SysLogSubscriber
+   type: syslog
+   facility: LOCAL6
    autosubscribe: INFO
-   filename: /dev/stdout
+   prefix: mendix
+   port: 2514
 mxruntime:
- DatabaseType: PostgreSQL
- DatabaseHost: "db:5432"
- DatabaseName: mendix
- DatabaseUserName: mendix
- DatabasePassword: mendix
+ DatabaseType: HSQLDB
+ DatabaseName: app-database
+# DatabaseType: PostgreSQL
+# DatabaseHost: "db:5432"
+# DatabaseName: mendix
+# DatabaseUserName: mendix
+# DatabasePassword: mendix

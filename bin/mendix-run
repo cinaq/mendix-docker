@@ -1,10 +1,15 @@
 #!/bin/bash
 
+trap 'kill $(cat /tmp/m2ee.pid)' EXIT
+/usr/sbin/syslog-ng -f /etc/syslog-ng.conf --control /tmp/syslog-ng.sock --persist-file /tmp/syslog-ng.persist --pidfile /tmp/syslog-ng.pid
+
 m2ee -c /srv/mendix/.m2ee/m2ee.yaml --yolo start
 
 # block until java process is gone
 until [ -z "$(pidof java)" ]; do
-    sleep 3
+    # make this waiting interruptible
+    sleep 3 &
+    wait
 done
 
 echo "Java process is gone, exiting..."
