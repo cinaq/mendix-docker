@@ -10,7 +10,3 @@ echo "Unpacking MDA: $mda_path"
 m2ee -c .m2ee/m2ee.yaml --yolo unpack "$mda_path"
 # download runtime if needed
 m2ee -c .m2ee/m2ee.yaml download_runtime
-
-## PERMISSIONS
-chown -R mendix: ./
-chmod 700 ./model ./data
