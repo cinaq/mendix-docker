@@ -11,7 +11,7 @@ m2ee:
    "-Dfile.encoding=UTF-8", "-XX:MaxPermSize=128M", "-Xmx512M", "-Xms512M",
    "-Djava.io.tmpdir=/tmp",
  ]
- logfile: /tmp/m2ee.log
+ logfile: /dev/stdout
  pidfile: /tmp/m2ee.pid
 logging:
  - name: SysLogSubscriber
