@@ -29,28 +29,42 @@ This image is not endorsed or supported officially by Mendix. This was forked fr
 Usage
 ==
 
-With own Dockerfile
+The proper usage your application with Docker is to package your application model into a Docker image. There are 2 ways to do this.
+
+Package from project source (not MDA)
 ===
+
 
 Create a Dockerfile with the following contents:
 ```
 FROM cinaq/mxbuild-docker AS builder
-# OPTION 1: MDA
-#COPY ./releases/TestApp.mda /srv/mendix/package
-# OPTION 2: Project source
 COPY . /srv/mendix/package
 RUN mendix-build
 
 FROM cinaq/mendix-docker
-ENV MENDIX_VERSION 8.5.0.64176
 # runtime is always needed to run
-RUN mendix-download $MENDIX_VERSION
+RUN mendix-download 8.5.0.64176
 COPY --from=builder /srv/mendix/data/model-upload/app.mda /srv/mendix/data/model-upload/app.mda
 RUN mendix-unpack
-USER mendix
 ```
 
-Also create a `docker-compose.yml`:
+Package from MDA
+===
+
+Create a Dockerfile with the following contents:
+```
+FROM cinaq/mendix-docker
+# runtime is always needed to run
+RUN mendix-download 8.5.0.64176
+COPY ./releases/myapp.mda /srv/mendix/data/model-upload/app.mda
+RUN mendix-unpack
+```
+
+
+Run the stack with docker-compose
+===
+
+Create a `docker-compose.yml`:
 
 ```
 version: '3.3'
