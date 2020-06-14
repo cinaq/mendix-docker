@@ -6,11 +6,21 @@ trap 'kill $(cat /tmp/m2ee.pid)' EXIT
 m2ee -c /srv/mendix/.m2ee/m2ee.yaml --yolo start
 
 # block until java process is gone
-until [ -z "$(pidof java)" ]; do
+while [ 1 ]; do
+    if [ -z "$(pidof java)" ]; then
+        echo "Java process died"
+        break
+    fi
+
+    curl -fs -o /dev/null --connect-timeout 5 http://localhost:8000/
+    if [ $? -ne 0 ]; then
+        echo "Application not responding to HTTP request"
+        break
+    fi
     # make this waiting interruptible
     sleep 3 &
     wait
 done
 
-echo "Java process is gone, exiting..."
+echo "Exiting..."
 exit 1
