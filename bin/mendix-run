@@ -1,21 +1,22 @@
 #!/bin/bash
 
-trap 'kill $(cat /tmp/m2ee.pid)' EXIT
-/usr/sbin/syslog-ng -f /etc/syslog-ng.conf --control /tmp/syslog-ng.sock --persist-file /tmp/syslog-ng.persist --pidfile /tmp/syslog-ng.pid
+mkfifo /tmp/out.log
+sed --unbuffered "s|^[0-9\-]\+\s[0-9:\.]\+\s||" /tmp/out.log &
 
 m2ee -c /srv/mendix/.m2ee/m2ee.yaml --yolo start
+
 
 # block until java process is gone
 while [ 1 ]; do
     if [ -z "$(pidof java)" ]; then
         echo "Java process died"
-        break
+        exit 0
     fi
 
     curl -fs -o /dev/null --connect-timeout 5 http://localhost:8000/
     if [ $? -ne 0 ]; then
         echo "Application not responding to HTTP request"
-        break
+        exit 1
     fi
     # make this waiting interruptible
     sleep 3 &
@@ -23,4 +24,3 @@ while [ 1 ]; do
 done
 
 echo "Exiting..."
-exit 1

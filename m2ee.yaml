@@ -11,13 +11,15 @@ m2ee:
    "-Dfile.encoding=UTF-8", "-XX:MaxPermSize=128M", "-Xmx512M", "-Xms512M",
    "-Djava.io.tmpdir=/tmp",
  ]
+ logfile: /tmp/out.log
  pidfile: /tmp/m2ee.pid
 logging:
  - name: FileSubscriber
    type: file
-   autosubscribe: DEBUG
-   filename: /dev/stdout
-   max_rotation: 0
+   autosubscribe: INFO
+   filename: /tmp/out.log
+   max_size: 1125899906842624
+   max_rotation: 1
 mxruntime:
  DatabaseType: HSQLDB
  DatabaseName: app-database

@@ -5,9 +5,7 @@
 FROM debian:stretch-backports
 MAINTAINER Xiwen Cheng <x@cinaq.com>
 
-RUN apt update && apt install -y --no-install-recommends gnupg ca-certificates-java openjdk-11-jre postgresql-client procps curl syslog-ng
-
-COPY syslog-ng.conf /etc/
+RUN apt update && apt install -y --no-install-recommends gnupg ca-certificates-java openjdk-11-jre postgresql-client procps curl
 
 # Need help from Mendix
 #RUN apt-key adv --fetch-keys https://packages.mendix.com/mendix-debian-archive-key.asc
