@@ -1,5 +1,6 @@
 #!/bin/bash
 
+rm -f /tmp/out.log &>/dev/null
 mkfifo /tmp/out.log
 sed --unbuffered "s|^[0-9\-]\+\s[0-9:\.]\+\s||" /tmp/out.log &
 
